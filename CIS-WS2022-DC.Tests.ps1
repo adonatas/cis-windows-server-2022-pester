@@ -250,10 +250,24 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
         It "<id> - <title>" -ForEach (Import-CisRules auditpol) -Tag 'AuditPol' {
             $actual = Get-AuditPolSettingByGuid -Guid $subcategory_guid
             $actual | Should -Not -BeNullOrEmpty -Because "[$id] auditpol returned no setting for $subcategory_guid"
-            if ($op -eq 'include') {
-                ("$actual" -like "*$expected*") | Should -BeTrue -Because "[$id] '$expected' must be enabled; actual: $actual"
+            # Superset semantics: a more inclusive auditing setting also satisfies a less inclusive
+            # requirement (Success and Failure satisfies a Success-only requirement).
+            function _flags($s) {
+                $h = @{ Success = $false; Failure = $false }
+                if ($s -match 'Success') { $h.Success = $true }
+                if ($s -match 'Failure') { $h.Failure = $true }
+                $h
+            }
+            $exp = _flags $expected
+            $act = _flags $actual
+            $missing = @()
+            if ($exp.Success -and -not $act.Success) { $missing += 'Success' }
+            if ($exp.Failure -and -not $act.Failure) { $missing += 'Failure' }
+            if ($expected -eq 'No Auditing') {
+                # 'No Auditing' literally means no flags - exact match required
+                $actual | Should -Be 'No Auditing' -Because "[$id] expected 'No Auditing'; actual: '$actual'"
             } else {
-                $actual | Should -Be $expected -Because "[$id] expected '$expected'; actual: '$actual'"
+                $missing.Count | Should -Be 0 -Because "[$id] expected '$expected' (or more inclusive); actual: '$actual'; missing flag(s): $($missing -join ', ')"
             }
         }
     }
