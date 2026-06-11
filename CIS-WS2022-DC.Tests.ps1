@@ -8,23 +8,46 @@
 
     Usage:
         Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1                       # run everything
-        Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -Tag L1-DC            # L1 only
-        Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -Tag L2-DC,NG-DC      # L2 + NG
-        Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -Tag Section-17       # one CIS section
+        Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -TagFilter L1-DC      # L1 only
+        Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -TagFilter Section-17 # one CIS section
         Invoke-Pester -Path .\CIS-WS2022-DC.Tests.ps1 -Output Detailed
 #>
 
-param(
-    [string]$RulesPath = (Join-Path $PSScriptRoot 'CIS-WS2022-DC-Rules.json'),
-    [string]$SeceditExportPath = (Join-Path $env:TEMP 'cis-secedit.inf')
+# -------------------- Load rules at discovery time --------------------
+$script:RulesPath = Join-Path $PSScriptRoot 'CIS-WS2022-DC-Rules.json'
+if (-not (Test-Path $script:RulesPath)) {
+    throw "Rules file not found: $($script:RulesPath)"
+}
+
+function ConvertTo-HashtableDeep {
+    param($Object)
+    if ($null -eq $Object) { return $null }
+    if ($Object -is [System.Collections.IDictionary]) { return $Object }
+    if ($Object -is [psobject] -and $Object.PSObject.Properties.Count -gt 0 -and -not ($Object -is [string])) {
+        $h = @{}
+        foreach ($p in $Object.PSObject.Properties) {
+            $h[$p.Name] = ConvertTo-HashtableDeep $p.Value
+        }
+        return $h
+    }
+    if ($Object -is [System.Collections.IList] -and -not ($Object -is [string])) {
+        return ,@($Object | ForEach-Object { ConvertTo-HashtableDeep $_ })
+    }
+    return $Object
+}
+
+$script:AllRules = @(
+    Get-Content -Raw -LiteralPath $script:RulesPath |
+        ConvertFrom-Json |
+        ForEach-Object { ConvertTo-HashtableDeep $_ }
 )
 
-BeforeDiscovery {
-    if (-not (Test-Path $RulesPath)) {
-        throw "Rules file not found: $RulesPath"
-    }
-    $script:Rules = Get-Content -Raw -LiteralPath $RulesPath | ConvertFrom-Json
-}
+# Per-Context filtered subsets
+$script:RegRules    = @($script:AllRules | Where-Object { $_.type -eq 'registry' })
+$script:MultiRules  = @($script:AllRules | Where-Object { $_.type -eq 'registry_multi' })
+$script:InfRules    = @($script:AllRules | Where-Object { $_.type -eq 'secedit_inf' })
+$script:UrRules     = @($script:AllRules | Where-Object { $_.type -eq 'user_rights' })
+$script:ApRules     = @($script:AllRules | Where-Object { $_.type -eq 'auditpol' })
 
 BeforeAll {
     # ------------ Helper: registry value read ------------
@@ -38,16 +61,14 @@ BeforeAll {
         }
     }
 
-    # ------------ Helper: secedit export ------------
+    # ------------ Helper: secedit export (cached) ------------
     function Initialize-SecEdit {
-        param([string]$ExportPath)
         if (-not $script:SeceditCache) {
-            $tmp = "$env:TEMP\cis-secedit-$([guid]::NewGuid()).inf"
+            $tmp = Join-Path $env:TEMP "cis-secedit-$([guid]::NewGuid()).inf"
             $null = & secedit.exe /export /cfg $tmp /quiet 2>&1
             if (-not (Test-Path $tmp)) {
-                throw "secedit /export failed"
+                throw "secedit /export failed — must run elevated"
             }
-            # secedit emits UTF-16 LE with BOM
             $raw = Get-Content -LiteralPath $tmp -Raw -Encoding Unicode
             Remove-Item $tmp -Force -ErrorAction SilentlyContinue
             $script:SeceditCache = $raw
@@ -77,28 +98,10 @@ BeforeAll {
         param([string]$PrivilegeRight)
         $raw = Get-SecEditValue -Section 'Privilege Rights' -Key $PrivilegeRight
         if (-not $raw) { return @() }
-        $list = $raw -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ }
-        # Normalise: convert "*S-1-5-..." → SID, raw account names left as-is
-        ,$list
+        ,($raw -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
     }
 
     # ------------ Helper: auditpol ------------
-    function Initialize-AuditPol {
-        if (-not $script:AuditPolCache) {
-            $out = & auditpol.exe /get /category:* 2>&1
-            $map = @{}
-            foreach ($line in $out) {
-                # Format: "  Subcategory Name                  Setting"
-                if ($line -match '^\s{2,}(\S.*?\S)\s{2,}(No Auditing|Success|Failure|Success and Failure)\s*$') {
-                    $map[$Matches[1].Trim()] = $Matches[2].Trim()
-                }
-            }
-            # Also fetch by GUID for reliability
-            $script:AuditPolCache = $map
-        }
-        $script:AuditPolCache
-    }
-
     function Get-AuditPolSettingByGuid {
         param([string]$Guid)
         $out = & auditpol.exe /get /subcategory:$Guid 2>&1
@@ -113,8 +116,8 @@ BeforeAll {
     # ------------ Helper: comparison ------------
     function Test-IntCompare {
         param($Actual, $Op, $Expected, $ExtraNe)
-        if ($null -eq $Actual) { return $false }
-        $a = [int]$Actual
+        if ($null -eq $Actual -or "$Actual" -eq '') { return $false }
+        $a = 0; if (-not [int]::TryParse("$Actual", [ref]$a)) { return $false }
         $e = [int]$Expected
         $base = switch ($Op) {
             '>=' { $a -ge $e }
@@ -122,7 +125,7 @@ BeforeAll {
             '==' { $a -eq $e }
             default { $false }
         }
-        if ($base -and $null -ne $ExtraNe) {
+        if ($base -and $null -ne $ExtraNe -and "$ExtraNe" -ne '') {
             return ($a -ne [int]$ExtraNe)
         }
         return $base
@@ -130,105 +133,78 @@ BeforeAll {
 
     function Compare-RegistryValue {
         param($Actual, $Expected, $Op, $ValueType)
+        if ($null -eq $Actual) { return $false }
         if ($ValueType -in 'REG_DWORD','REG_QWORD') {
             return Test-IntCompare -Actual $Actual -Op $Op -Expected $Expected
         }
         if ($ValueType -eq 'REG_MULTI_SZ') {
             $expList = @()
             if ($Expected -is [string]) {
-                $expList = $Expected -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ }
-            } elseif ($Expected -is [array]) {
-                $expList = $Expected
+                $expList = @($Expected -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+            } elseif ($Expected -is [System.Collections.IList]) {
+                $expList = @($Expected)
             }
-            $actList = @()
-            if ($null -ne $Actual) {
-                $actList = @($Actual) | ForEach-Object { "$_".Trim() } | Where-Object { $_ }
-            }
+            $actList = @($Actual) | ForEach-Object { "$_".Trim() } | Where-Object { $_ }
             if ($expList.Count -eq 0 -and $actList.Count -eq 0) { return $true }
             if ($expList.Count -ne $actList.Count) { return $false }
-            $sortedExp = $expList | Sort-Object
-            $sortedAct = $actList | Sort-Object
-            return -not (Compare-Object $sortedExp $sortedAct)
+            return -not (Compare-Object ($expList | Sort-Object) ($actList | Sort-Object))
         }
-        # REG_SZ / default: case-insensitive equality
+        # REG_SZ / default
+        if ($null -eq $Expected -or "$Expected" -eq '') {
+            return ($null -eq $Actual -or "$Actual" -eq '')
+        }
         return ("$Actual".Trim() -ieq "$Expected".Trim())
     }
 }
 
-# -------------------- Discovery: build test data --------------------
 Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller, Computer Configuration)" {
 
-    # --- Registry-backed recommendations ---
     Context "Registry-backed recommendations" {
-        $regRules = $script:Rules | Where-Object { $_.type -eq 'registry' }
-        It "<id> — <title>" -ForEach $regRules -Tag @('Registry', "<profile>", "Section-<section>") {
-            param($id, $title, $key, $value_name, $value_type, $expected_value, $op)
+        It "<id> - <title>" -ForEach $script:RegRules -Tag 'Registry' {
             $actual = Get-RegistryValueSafe -Path $key -Name $value_name
             $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op -ValueType $value_type
             $result | Should -BeTrue -Because "[$id] $key\$value_name should be $op $expected_value ($value_type); actual: '$actual'"
         }
     }
 
-    # --- Multi-value registry (Hardened UNC Paths) ---
     Context "Multi-value registry recommendations" {
-        $multi = $script:Rules | Where-Object { $_.type -eq 'registry_multi' }
-        It "<id> — <title>" -ForEach $multi -Tag @('Registry', "<profile>", "Section-<section>") {
-            param($id, $title, $key, $expected_values)
+        It "<id> - <title>" -ForEach $script:MultiRules -Tag 'Registry' {
             $ok = $true
             $missing = @()
-            $expected_values.PSObject.Properties | ForEach-Object {
-                $valueName  = $_.Name
-                $required   = $_.Value
-                $actual     = Get-RegistryValueSafe -Path $key -Name $valueName
-                if ($null -eq $actual) {
-                    $ok = $false; $missing += "$valueName (value missing)"
-                    return
-                }
+            foreach ($vname in $expected_values.Keys) {
+                $required = $expected_values[$vname]
+                $actual   = Get-RegistryValueSafe -Path $key -Name $vname
+                if ($null -eq $actual) { $ok = $false; $missing += "$vname (missing)"; continue }
                 foreach ($req in $required) {
-                    if ($actual -notlike "*$req*") {
-                        $ok = $false; $missing += "$valueName lacks '$req'"
-                    }
+                    if ("$actual" -notlike "*$req*") { $ok = $false; $missing += "$vname lacks '$req'" }
                 }
             }
             $ok | Should -BeTrue -Because "[$id] missing: $($missing -join '; ')"
         }
     }
 
-    # --- secedit INF (Account Policies + a few Security Options) ---
     Context "secedit INF recommendations (Account Policy / System Access)" {
-        $infRules = $script:Rules | Where-Object { $_.type -eq 'secedit_inf' }
-        It "<id> — <title>" -ForEach $infRules -Tag @('SecEdit', "<profile>", "Section-<section>") {
-            param($id, $title, $inf_section, $inf_key, $op, $value, $extra_ne, $default_value)
+        It "<id> - <title>" -ForEach $script:InfRules -Tag 'SecEdit' {
             $actual = Get-SecEditValue -Section $inf_section -Key $inf_key
             if ($op -eq 'configured_non_default') {
-                # Rename admin/guest: must exist and not equal default name
                 $actual | Should -Not -BeNullOrEmpty -Because "[$id] $inf_section\$inf_key not configured"
                 $actual.Trim('"') | Should -Not -Be $default_value -Because "[$id] still using default name"
                 return
             }
-            $extraNeVal = $null
-            if ($PSBoundParameters.ContainsKey('extra_ne')) { $extraNeVal = $extra_ne }
-            (Test-IntCompare -Actual $actual -Op $op -Expected $value -ExtraNe $extraNeVal) | `
-                Should -BeTrue -Because "[$id] $inf_section\$inf_key should be $op $value (extra_ne=$extraNeVal); actual: '$actual'"
+            (Test-IntCompare -Actual $actual -Op $op -Expected $value -ExtraNe $extra_ne) |
+                Should -BeTrue -Because "[$id] $inf_section\$inf_key should be $op $value (extra_ne=$extra_ne); actual: '$actual'"
         }
     }
 
-    # --- User Rights Assignment ---
     Context "User Rights Assignment" {
-        $urRules = $script:Rules | Where-Object { $_.type -eq 'user_rights' }
-        It "<id> — <title>" -ForEach $urRules -Tag @('UserRights', "<profile>", "Section-<section>") {
-            param($id, $title, $privilege_right, $expected_accounts, $expected_label, $op)
+        It "<id> - <title>" -ForEach $script:UrRules -Tag 'UserRights' {
             $actual = Get-SecEditPrivilegeAccounts -PrivilegeRight $privilege_right
-            $exp = @()
-            if ($expected_accounts) { $exp = @($expected_accounts) }
-            $actualNorm = $actual | ForEach-Object { $_.Trim() } | Sort-Object -Unique
-            $expectedNorm = $exp | ForEach-Object { $_.Trim() } | Sort-Object -Unique
+            $exp = @(); if ($expected_accounts) { $exp = @($expected_accounts) }
+            $actualNorm   = @($actual | ForEach-Object { $_.Trim() } | Sort-Object -Unique)
+            $expectedNorm = @($exp    | ForEach-Object { $_.Trim() } | Sort-Object -Unique)
 
             if ($op -eq 'include') {
-                $missing = @()
-                foreach ($e in $expectedNorm) {
-                    if ($actualNorm -notcontains $e) { $missing += $e }
-                }
+                $missing = @($expectedNorm | Where-Object { $actualNorm -notcontains $_ })
                 $missing.Count | Should -Be 0 -Because "[$id] $privilege_right must include '$expected_label'; missing: $($missing -join ', '); actual: $($actualNorm -join ', ')"
             } else {
                 if ($expectedNorm.Count -eq 0) {
@@ -241,16 +217,12 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
         }
     }
 
-    # --- Advanced Audit Policy (auditpol) ---
     Context "Advanced Audit Policy Configuration" {
-        $apRules = $script:Rules | Where-Object { $_.type -eq 'auditpol' }
-        It "<id> — <title>" -ForEach $apRules -Tag @('AuditPol', "<profile>", "Section-<section>") {
-            param($id, $title, $subcategory_guid, $expected, $op)
+        It "<id> - <title>" -ForEach $script:ApRules -Tag 'AuditPol' {
             $actual = Get-AuditPolSettingByGuid -Guid $subcategory_guid
             $actual | Should -Not -BeNullOrEmpty -Because "[$id] auditpol returned no setting for $subcategory_guid"
             if ($op -eq 'include') {
-                # 'expected' is e.g. 'Success' or 'Failure'; actual must include it
-                ($actual -like "*$expected*") | Should -BeTrue -Because "[$id] $expected must be enabled; actual: $actual"
+                ("$actual" -like "*$expected*") | Should -BeTrue -Because "[$id] '$expected' must be enabled; actual: $actual"
             } else {
                 $actual | Should -Be $expected -Because "[$id] expected '$expected'; actual: '$actual'"
             }
