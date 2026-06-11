@@ -698,7 +698,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters",
-  "value_name": "Vuln",
+  "value_name": "VulnerableChannelAllowList",
   "value_type": "REG_SZ",
   "expected_value": "does not exist",
   "op": "=="
@@ -710,7 +710,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\NTDS\\Parameters",
-  "value_name": "LdapEnforceChannelBind",
+  "value_name": "LdapEnforceChannelBinding",
   "value_type": "REG_DWORD",
   "expected_value": 2,
   "op": "=="
@@ -734,7 +734,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters",
-  "value_name": "RefusePasswordChan",
+  "value_name": "RefusePasswordChange",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -782,7 +782,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters",
-  "value_name": "DisablePasswordCha",
+  "value_name": "DisablePasswordChange",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -830,7 +830,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "DontDisplayLas",
+  "value_name": "DontDisplayLastUserName",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -902,7 +902,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters",
-  "value_name": "RequireSe",
+  "value_name": "RequireSecuritySignature",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -914,7 +914,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters",
-  "value_name": "EnablePla",
+  "value_name": "EnablePlainTextPassword",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -938,7 +938,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters",
-  "value_name": "RequireSecurit",
+  "value_name": "RequireSecuritySignature",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -950,7 +950,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters",
-  "value_name": "enableforcedlo",
+  "value_name": "enableforcedlogoff",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1011,7 +1011,7 @@
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\ AllowedExactPaths",
   "value_name": "Machine",
   "value_type": "REG_MULTI_SZ",
-  "expected_value": "System\\CurrentControlSet\\Control\\ProductOptions,System\\CurrentControlS et\\Control\\Server Applications,Software\\Microsoft\\Windows NT\\CurrentVersion",
+  "expected_value": "System\\CurrentControlSet\\Control\\ProductOptions,System\\CurrentControlS",
   "op": "=="
  },
  {
@@ -1023,7 +1023,7 @@
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\ AllowedPaths",
   "value_name": "Machine",
   "value_type": "REG_MULTI_SZ",
-  "expected_value": "System\\CurrentControlSet\\Control\\Print\\Printers,System\\CurrentControlS et\\Services\\Eventlog,Software\\Microsoft\\OLAP Server,Software\\Microsoft\\Windows NT\\CurrentVersion\\Print,Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows,System\\CurrentControlSet\\Control\\ContentInde x,System\\CurrentControlSet\\Control\\Terminal Server,System\\CurrentControlSet\\Control\\Terminal Server\\UserConfig,System\\CurrentControlSet\\Control\\Terminal Server\\DefaultUserConfiguration,Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib,System\\CurrentControlSet\\Services\\SysmonLog, System\\CurrentControlSet\\Services\\CertSvc,System\\CurrentControlSet\\Ser vices\\WINS",
+  "expected_value": "System\\CurrentControlSet\\Control\\Print\\Printers,System\\CurrentControlS",
   "op": "=="
  },
  {
@@ -1033,7 +1033,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters",
-  "value_name": "RestrictNullSe",
+  "value_name": "RestrictNullSessAccess",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1164,7 +1164,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0",
-  "value_name": "NTLMMinClientS",
+  "value_name": "NTLMMinClientSec",
   "value_type": "REG_DWORD",
   "expected_value": 537395200,
   "op": "=="
@@ -1176,7 +1176,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0",
-  "value_name": "NTLMMinServerS",
+  "value_name": "NTLMMinServerSec",
   "value_type": "REG_DWORD",
   "expected_value": 537395200,
   "op": "=="
@@ -1200,7 +1200,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters",
-  "value_name": "Audi",
+  "value_name": "AuditNTLMInDomain",
   "value_type": "REG_DWORD",
   "expected_value": 7,
   "op": "=="
@@ -1224,7 +1224,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "ShutdownWithou",
+  "value_name": "ShutdownWithoutLogon",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -1260,7 +1260,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "FilterAdminist",
+  "value_name": "FilterAdministratorToken",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1272,7 +1272,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "ConsentPromptB",
+  "value_name": "ConsentPromptBehaviorAdmin",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": ">="
@@ -1284,7 +1284,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "ConsentPromptB",
+  "value_name": "ConsentPromptBehaviorUser",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -1296,7 +1296,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "EnableInstalle",
+  "value_name": "EnableInstallerDetection",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1344,7 +1344,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "EnableVirtuali",
+  "value_name": "EnableVirtualization",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1392,7 +1392,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile",
-  "value_name": "DisableNotific",
+  "value_name": "DisableNotifications",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1404,7 +1404,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile\\Logging",
-  "value_name": "LogFil",
+  "value_name": "LogFilePath",
   "value_type": "REG_SZ",
   "expected_value": "<path>\\<filename>",
   "op": "=="
@@ -1428,7 +1428,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile\\Logging",
-  "value_name": "LogDro",
+  "value_name": "LogDroppedPackets",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1440,7 +1440,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile\\Logging",
-  "value_name": "LogSuc",
+  "value_name": "LogSuccessfulConnections",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1452,7 +1452,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile",
-  "value_name": "EnableFirewal",
+  "value_name": "EnableFirewall",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1464,7 +1464,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile",
-  "value_name": "DefaultInboun",
+  "value_name": "DefaultInboundAction",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1476,7 +1476,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile",
-  "value_name": "DisableNotifi",
+  "value_name": "DisableNotifications",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1488,7 +1488,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging",
-  "value_name": "LogFi",
+  "value_name": "LogFilePath",
   "value_type": "REG_SZ",
   "expected_value": "<path>\\<filename>",
   "op": "=="
@@ -1512,7 +1512,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging",
-  "value_name": "LogDr",
+  "value_name": "LogDroppedPackets",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1524,7 +1524,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging",
-  "value_name": "LogSu",
+  "value_name": "LogSuccessfulConnections",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1560,7 +1560,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile",
-  "value_name": "DisableNotific",
+  "value_name": "DisableNotifications",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1572,7 +1572,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile",
-  "value_name": "AllowLocalPoli",
+  "value_name": "AllowLocalPolicyMerge",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -1584,7 +1584,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile",
-  "value_name": "AllowLocalIPse",
+  "value_name": "AllowLocalIPsecPolicyMerge",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -1596,7 +1596,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging",
-  "value_name": "LogFil",
+  "value_name": "LogFilePath",
   "value_type": "REG_SZ",
   "expected_value": "<path>\\<filename>",
   "op": "=="
@@ -1620,7 +1620,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging",
-  "value_name": "LogDro",
+  "value_name": "LogDroppedPackets",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1632,7 +1632,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging",
-  "value_name": "LogSuc",
+  "value_name": "LogSuccessfulConnections",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1996,7 +1996,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization",
-  "value_name": "NoLockScreenSlidesho",
+  "value_name": "NoLockScreenSlideshow",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2008,7 +2008,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\InputPersonalization",
-  "value_name": "AllowInputPersonalizati",
+  "value_name": "AllowInputPersonalization",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2020,7 +2020,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-  "value_name": "AllowOnlineT",
+  "value_name": "AllowOnlineTips",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2104,7 +2104,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters",
-  "value_name": "DisableIPSourceRouti",
+  "value_name": "DisableIPSourceRouting",
   "value_type": "REG_DWORD",
   "expected_value": 2,
   "op": "=="
@@ -2116,7 +2116,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-  "value_name": "DisableIPSourceRoutin",
+  "value_name": "DisableIPSourceRouting",
   "value_type": "REG_DWORD",
   "expected_value": 2,
   "op": "=="
@@ -2140,7 +2140,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-  "value_name": "KeepAli",
+  "value_name": "KeepAliveTime",
   "value_type": "REG_DWORD",
   "expected_value": 300000,
   "op": "=="
@@ -2164,7 +2164,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-  "value_name": "PerformRouterDiscover",
+  "value_name": "PerformRouterDiscovery",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2200,7 +2200,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters",
-  "value_name": "TcpMaxD",
+  "value_name": "TcpMaxDataRetransmissions",
   "value_type": "REG_DWORD",
   "expected_value": 3,
   "op": "=="
@@ -2212,7 +2212,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Security",
-  "value_name": "Warnin",
+  "value_name": "WarningLevel",
   "value_type": "REG_DWORD",
   "expected_value": 90,
   "op": "<="
@@ -2320,7 +2320,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD",
-  "value_name": "AllowLLTDIOOnDoma",
+  "value_name": "AllowLLTDIOOnDomain",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2332,7 +2332,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD",
-  "value_name": "AllowRspndrOnDoma",
+  "value_name": "AllowRspndrOnDomain",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2425,7 +2425,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WCN\\Registrars",
-  "value_name": "EnableR",
+  "value_name": "EnableRegistrars",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2449,7 +2449,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy",
-  "value_name": "fMi",
+  "value_name": "fMinimizeConnections",
   "value_type": "REG_DWORD",
   "expected_value": 3,
   "op": "=="
@@ -2605,7 +2605,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\PushNotifications",
-  "value_name": "NoC",
+  "value_name": "NoCloudApplicationNotification",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2617,7 +2617,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit",
-  "value_name": "ProcessC",
+  "value_name": "ProcessCreationIncludeCmdLine_Enabled",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2653,7 +2653,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard",
-  "value_name": "EnableVirtualizationBase",
+  "value_name": "EnableVirtualizationBasedSecurity",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2665,7 +2665,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard",
-  "value_name": "RequirePla",
+  "value_name": "RequirePlatformSecurityFeatures",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": ">="
@@ -2677,7 +2677,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard",
-  "value_name": "HypervisorEnforcedCodeIn",
+  "value_name": "HypervisorEnforcedCodeIntegrity",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2713,7 +2713,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard",
-  "value_name": "ConfigureSystemGuardLaun",
+  "value_name": "ConfigureSystemGuardLaunch",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2737,7 +2737,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Policies\\EarlyLaunch",
-  "value_name": "DriverLoadPo",
+  "value_name": "DriverLoadPolicy",
   "value_type": "REG_DWORD",
   "expected_value": 3,
   "op": "=="
@@ -2821,7 +2821,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\TabletPC",
-  "value_name": "PreventHandwritingDataShari",
+  "value_name": "PreventHandwritingDataSharing",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2833,7 +2833,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\HandwritingErrorReports",
-  "value_name": "PreventHandw",
+  "value_name": "PreventHandwritingErrorReports",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2857,7 +2857,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-  "value_name": "NoWebService",
+  "value_name": "NoWebServices",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2905,7 +2905,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-  "value_name": "NoOnlinePrin",
+  "value_name": "NoOnlinePrintsWizard",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3025,7 +3025,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-  "value_name": "BlockUserFromShowingAccountDe",
+  "value_name": "BlockUserFromShowingAccountDetailsOnSignin",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3061,7 +3061,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-  "value_name": "DisableLockScreenAppNotificat",
+  "value_name": "DisableLockScreenAppNotifications",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3193,7 +3193,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\ScriptedDiagnosticsProvider\\Policy",
-  "value_name": "D",
+  "value_name": "DisableQueryRemoteServer",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3217,7 +3217,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AdvertisingInfo",
-  "value_name": "DisabledByGroupPolic",
+  "value_name": "DisabledByGroupPolicy",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3240,7 +3240,7 @@
   "profile": "L2-DC",
   "section": "18",
   "type": "registry",
-  "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\AppModel\\StateManager ",
+  "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\AppModel\\StateManager",
   "value_name": "AllowSharedLocalAppData",
   "value_type": "REG_DWORD",
   "expected_value": 0,
@@ -3301,7 +3301,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Biometrics\\FacialFeatures",
-  "value_name": "EnhancedAntiSpoofi",
+  "value_name": "EnhancedAntiSpoofing",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3325,7 +3325,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
-  "value_name": "DisableConsumerAccountS",
+  "value_name": "DisableConsumerAccountStateContent",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3337,7 +3337,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
-  "value_name": "DisableCloudOptimizedCo",
+  "value_name": "DisableCloudOptimizedContent",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3373,7 +3373,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\CredUI",
-  "value_name": "EnumerateAdmin",
+  "value_name": "EnumerateAdministrators",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3409,7 +3409,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
-  "value_name": "DoNotShowFeedbackNoti",
+  "value_name": "DoNotShowFeedbackNotifications",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3421,7 +3421,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
-  "value_name": "EnableOneSettingsAudi",
+  "value_name": "EnableOneSettingsAuditing",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3433,7 +3433,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
-  "value_name": "LimitDiagnosticLogCol",
+  "value_name": "LimitDiagnosticLogCollection",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3469,7 +3469,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller",
-  "value_name": "EnableExperimentalFeatu",
+  "value_name": "EnableExperimentalFeatures",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3493,7 +3493,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller",
-  "value_name": "EnableLocalArchiveMalwa",
+  "value_name": "EnableLocalArchiveMalwareScanOverride",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3505,7 +3505,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller",
-  "value_name": "EnableMSAppInstallerPro",
+  "value_name": "EnableMSAppInstallerProtocol",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3529,7 +3529,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller",
-  "value_name": "EnableWindowsPackageMan",
+  "value_name": "EnableWindowsPackageManagerCommandLineInterfaces",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3553,7 +3553,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Application",
-  "value_name": "M",
+  "value_name": "MaxSize",
   "value_type": "REG_DWORD",
   "expected_value": 32768,
   "op": ">="
@@ -3577,7 +3577,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security",
-  "value_name": "MaxS",
+  "value_name": "MaxSize",
   "value_type": "REG_DWORD",
   "expected_value": 196608,
   "op": ">="
@@ -3625,7 +3625,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System",
-  "value_name": "MaxSiz",
+  "value_name": "MaxSize",
   "value_type": "REG_DWORD",
   "expected_value": 32768,
   "op": ">="
@@ -3637,7 +3637,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
-  "value_name": "DisableMotWOnInsecurePathCo",
+  "value_name": "DisableMotWOnInsecurePathCopy",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3661,7 +3661,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
-  "value_name": "NoHeapTerminationOnCorrupti",
+  "value_name": "NoHeapTerminationOnCorruption",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3673,7 +3673,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-  "value_name": "PreXPSP2Shel",
+  "value_name": "PreXPSP2ShellProtocolBehavior",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -4309,7 +4309,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-  "value_name": "EnableSmartScre",
+  "value_name": "EnableSmartScreen",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4321,7 +4321,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsInkWorkspace",
-  "value_name": "AllowSuggestedAppsInWind",
+  "value_name": "AllowSuggestedAppsInWindowsInkWorkspace",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -4393,7 +4393,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "DisableAutomat",
+  "value_name": "DisableAutomaticRestartSignOn",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4417,7 +4417,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\Transcription",
-  "value_name": "EnableTrans",
+  "value_name": "EnableTranscripting",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4489,7 +4489,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WinRM\\Service",
-  "value_name": "AllowUnencryptedTraffi",
+  "value_name": "AllowUnencryptedTraffic",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -4537,7 +4537,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
-  "value_name": "NoAutoRebootWithLog",
+  "value_name": "NoAutoRebootWithLoggedOnUsers",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -4573,7 +4573,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
-  "value_name": "ManagePreviewBuildsPol",
+  "value_name": "ManagePreviewBuildsPolicyValue",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4585,7 +4585,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
-  "value_name": "DeferQua",
+  "value_name": "DeferQualityUpdates",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="

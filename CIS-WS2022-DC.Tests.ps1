@@ -2,7 +2,7 @@
 #Requires -Modules @{ ModuleName="Pester"; ModuleVersion="5.0.0" }
 <#
     CIS Microsoft Windows Server 2022 Benchmark v5.0.0
-    Data-driven Pester suite — Domain Controller, Computer Configuration only.
+    Data-driven Pester suite - Domain Controller, Computer Configuration only.
     Profiles included: Level 1 - DC, Level 2 - DC, Next Generation Windows Security - DC.
     User-configuration recommendations (section 19) are intentionally excluded.
 
@@ -14,40 +14,40 @@
 #>
 
 # -------------------- Load rules at discovery time --------------------
-$script:RulesPath = Join-Path $PSScriptRoot 'CIS-WS2022-DC-Rules.json'
-if (-not (Test-Path $script:RulesPath)) {
-    throw "Rules file not found: $($script:RulesPath)"
-}
-
+$script:CIS_ScriptRoot = $PSScriptRoot
 function ConvertTo-HashtableDeep {
     param($Object)
     if ($null -eq $Object) { return $null }
-    if ($Object -is [System.Collections.IDictionary]) { return $Object }
-    if ($Object -is [psobject] -and $Object.PSObject.Properties.Count -gt 0 -and -not ($Object -is [string])) {
-        $h = @{}
-        foreach ($p in $Object.PSObject.Properties) {
-            $h[$p.Name] = ConvertTo-HashtableDeep $p.Value
-        }
+    if ($Object -is [string] -or $Object -is [ValueType]) { return $Object }
+    if ($Object -is [System.Collections.IDictionary]) {
+        $h = @{}; foreach ($k in $Object.Keys) { $h[$k] = ConvertTo-HashtableDeep $Object[$k] }
         return $h
     }
-    if ($Object -is [System.Collections.IList] -and -not ($Object -is [string])) {
-        return ,@($Object | ForEach-Object { ConvertTo-HashtableDeep $_ })
+    if ($Object -is [System.Management.Automation.PSCustomObject] -or
+        $Object -is [System.Management.Automation.PSObject]) {
+        if ($Object.PSObject.Properties.Count -gt 0 -and -not ($Object -is [array])) {
+            $h = @{}
+            foreach ($p in $Object.PSObject.Properties) { $h[$p.Name] = ConvertTo-HashtableDeep $p.Value }
+            return $h
+        }
+    }
+    if ($Object -is [System.Collections.IEnumerable]) {
+        return ,@(foreach ($i in $Object) { ConvertTo-HashtableDeep $i })
     }
     return $Object
 }
 
-$script:AllRules = @(
-    Get-Content -Raw -LiteralPath $script:RulesPath |
-        ConvertFrom-Json |
-        ForEach-Object { ConvertTo-HashtableDeep $_ }
-)
-
-# Per-Context filtered subsets
-$script:RegRules    = @($script:AllRules | Where-Object { $_.type -eq 'registry' })
-$script:MultiRules  = @($script:AllRules | Where-Object { $_.type -eq 'registry_multi' })
-$script:InfRules    = @($script:AllRules | Where-Object { $_.type -eq 'secedit_inf' })
-$script:UrRules     = @($script:AllRules | Where-Object { $_.type -eq 'user_rights' })
-$script:ApRules     = @($script:AllRules | Where-Object { $_.type -eq 'auditpol' })
+function Import-CisRules {
+    param([string]$Type)
+    $rulesPath = Join-Path $PSScriptRoot 'CIS-WS2022-DC-Rules.json'
+    if (-not (Test-Path $rulesPath)) { throw "Rules file not found: $rulesPath" }
+    $all = Get-Content -Raw -LiteralPath $rulesPath | ConvertFrom-Json
+    $out = @()
+    foreach ($r in $all) {
+        if ($r.type -eq $Type) { $out += ,(ConvertTo-HashtableDeep $r) }
+    }
+    ,$out
+}
 
 BeforeAll {
     # ------------ Helper: registry value read ------------
@@ -67,7 +67,7 @@ BeforeAll {
             $tmp = Join-Path $env:TEMP "cis-secedit-$([guid]::NewGuid()).inf"
             $null = & secedit.exe /export /cfg $tmp /quiet 2>&1
             if (-not (Test-Path $tmp)) {
-                throw "secedit /export failed — must run elevated"
+                throw "secedit /export failed - must run elevated"
             }
             $raw = Get-Content -LiteralPath $tmp -Raw -Encoding Unicode
             Remove-Item $tmp -Force -ErrorAction SilentlyContinue
@@ -160,7 +160,7 @@ BeforeAll {
 Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller, Computer Configuration)" {
 
     Context "Registry-backed recommendations" {
-        It "<id> - <title>" -ForEach $script:RegRules -Tag 'Registry' {
+        It "<id> - <title>" -ForEach (Import-CisRules registry) -Tag 'Registry' {
             $actual = Get-RegistryValueSafe -Path $key -Name $value_name
             $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op -ValueType $value_type
             $result | Should -BeTrue -Because "[$id] $key\$value_name should be $op $expected_value ($value_type); actual: '$actual'"
@@ -168,7 +168,7 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
     }
 
     Context "Multi-value registry recommendations" {
-        It "<id> - <title>" -ForEach $script:MultiRules -Tag 'Registry' {
+        It "<id> - <title>" -ForEach (Import-CisRules registry_multi) -Tag 'Registry' {
             $ok = $true
             $missing = @()
             foreach ($vname in $expected_values.Keys) {
@@ -184,7 +184,7 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
     }
 
     Context "secedit INF recommendations (Account Policy / System Access)" {
-        It "<id> - <title>" -ForEach $script:InfRules -Tag 'SecEdit' {
+        It "<id> - <title>" -ForEach (Import-CisRules secedit_inf) -Tag 'SecEdit' {
             $actual = Get-SecEditValue -Section $inf_section -Key $inf_key
             if ($op -eq 'configured_non_default') {
                 $actual | Should -Not -BeNullOrEmpty -Because "[$id] $inf_section\$inf_key not configured"
@@ -197,7 +197,7 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
     }
 
     Context "User Rights Assignment" {
-        It "<id> - <title>" -ForEach $script:UrRules -Tag 'UserRights' {
+        It "<id> - <title>" -ForEach (Import-CisRules user_rights) -Tag 'UserRights' {
             $actual = Get-SecEditPrivilegeAccounts -PrivilegeRight $privilege_right
             $exp = @(); if ($expected_accounts) { $exp = @($expected_accounts) }
             $actualNorm   = @($actual | ForEach-Object { $_.Trim() } | Sort-Object -Unique)
@@ -218,7 +218,7 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
     }
 
     Context "Advanced Audit Policy Configuration" {
-        It "<id> - <title>" -ForEach $script:ApRules -Tag 'AuditPol' {
+        It "<id> - <title>" -ForEach (Import-CisRules auditpol) -Tag 'AuditPol' {
             $actual = Get-AuditPolSettingByGuid -Guid $subcategory_guid
             $actual | Should -Not -BeNullOrEmpty -Because "[$id] auditpol returned no setting for $subcategory_guid"
             if ($op -eq 'include') {
