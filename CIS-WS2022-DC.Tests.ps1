@@ -132,10 +132,22 @@ BeforeAll {
     }
 
     function Compare-RegistryValue {
-        param($Actual, $Expected, $Op, $ValueType)
+        param($Actual, $Expected, $Op, $ValueType, $ExpectedValues, $ExtraNe)
+        # 'not_exists': the test passes when the registry value is absent
+        if ($Op -eq 'not_exists') { return ($null -eq $Actual) }
         if ($null -eq $Actual) { return $false }
+        # 'in': actual must be one of ExpectedValues
+        if ($Op -eq 'in' -and $ExpectedValues) {
+            $a = 0
+            if ([int]::TryParse("$Actual", [ref]$a)) {
+                foreach ($ev in $ExpectedValues) { if ($a -eq [int]$ev) { return $true } }
+            } else {
+                foreach ($ev in $ExpectedValues) { if ("$Actual".Trim() -ieq "$ev") { return $true } }
+            }
+            return $false
+        }
         if ($ValueType -in 'REG_DWORD','REG_QWORD') {
-            return Test-IntCompare -Actual $Actual -Op $Op -Expected $Expected
+            return Test-IntCompare -Actual $Actual -Op $Op -Expected $Expected -ExtraNe $ExtraNe
         }
         if ($ValueType -eq 'REG_MULTI_SZ') {
             $expList = @()
@@ -162,8 +174,25 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
     Context "Registry-backed recommendations" {
         It "<id> - <title>" -ForEach (Import-CisRules registry) -Tag 'Registry' {
             $actual = Get-RegistryValueSafe -Path $key -Name $value_name
-            $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op -ValueType $value_type
-            $result | Should -BeTrue -Because "[$id] $key\$value_name should be $op $expected_value ($value_type); actual: '$actual'"
+            $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op `
+                        -ValueType $value_type -ExpectedValues $expected_values -ExtraNe $extra_ne
+            $expectedDisplay = if ($op -eq 'in')         { '[' + (@($expected_values) -join ',') + ']' }
+                               elseif ($op -eq 'not_exists') { '<absent>' }
+                               else                       { "$expected_value" }
+            $result | Should -BeTrue -Because "[$id] $key\$value_name should be $op $expectedDisplay ($value_type); actual: '$actual'"
+        }
+    }
+
+    Context "Paired-registry recommendations (multi-location)" {
+        It "<id> - <title>" -ForEach (Import-CisRules registry_pair) -Tag 'Registry' {
+            $bad = @()
+            foreach ($c in $checks) {
+                $a = Get-RegistryValueSafe -Path $c.key -Name $c.value_name
+                $ok = Compare-RegistryValue -Actual $a -Expected $c.expected_value -Op $c.op `
+                            -ValueType $c.value_type
+                if (-not $ok) { $bad += ("{0}\{1} (expected {2} {3}, got '{4}')" -f $c.key, $c.value_name, $c.op, $c.expected_value, $a) }
+            }
+            $bad.Count | Should -Be 0 -Because "[$id] failed: $($bad -join '; ')"
         }
     }
 

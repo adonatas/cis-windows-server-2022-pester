@@ -700,8 +700,8 @@
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters",
   "value_name": "VulnerableChannelAllowList",
   "value_type": "REG_SZ",
-  "expected_value": "does not exist",
-  "op": "=="
+  "expected_value": null,
+  "op": "not_exists"
  },
  {
   "id": "2.3.5.3",
@@ -797,7 +797,8 @@
   "value_name": "MaximumPasswordAge",
   "value_type": "REG_DWORD",
   "expected_value": 30,
-  "op": "<="
+  "op": "<=",
+  "extra_ne": 0
  },
  {
   "id": "2.3.6.6",
@@ -845,7 +846,8 @@
   "value_name": "InactivityTimeoutSecs",
   "value_type": "REG_DWORD",
   "expected_value": 900,
-  "op": "<="
+  "op": "<=",
+  "extra_ne": 0
  },
  {
   "id": "2.3.7.4",
@@ -892,8 +894,13 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
   "value_name": "ScRemoveOption",
   "value_type": "REG_SZ",
-  "expected_value": "1, 2, or 3",
-  "op": ">="
+  "expected_values": [
+   1,
+   2,
+   3
+  ],
+  "expected_value": 1,
+  "op": "in"
  },
  {
   "id": "2.3.8.1",
@@ -1154,8 +1161,12 @@
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LDAP",
   "value_name": "LDAPClientIntegrity",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "2.3.11.9",
@@ -1214,8 +1225,12 @@
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0",
   "value_name": "RestrictSendingNTLMTraffic",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "2.3.13.1",
@@ -1274,8 +1289,12 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
   "value_name": "ConsentPromptBehaviorAdmin",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "2.3.17.3",
@@ -1308,7 +1327,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "EnableSecureUI",
+  "value_name": "EnableSecureUIAPaths",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1332,7 +1351,7 @@
   "section": "2",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
-  "value_name": "PromptOnSecure",
+  "value_name": "PromptOnSecureDesktop",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1380,7 +1399,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile",
-  "value_name": "DefaultInbound",
+  "value_name": "DefaultInboundAction",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -1548,7 +1567,7 @@
   "section": "9",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile",
-  "value_name": "DefaultInbound",
+  "value_name": "DefaultInboundAction",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2055,10 +2074,10 @@
   "profile": "L1-DC",
   "section": "18",
   "type": "registry",
-  "key": "HKLM:\\SOFTWARE\\Microsoft\\Cryptography\\Wintrust\\Config",
+  "key": "HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Cryptography\\Wintrust\\Config",
   "value_name": "EnableCertPaddingCheck",
-  "value_type": "REG_SZ",
-  "expected_value": "1",
+  "value_type": "REG_DWORD",
+  "expected_value": 1,
   "op": "=="
  },
  {
@@ -2188,7 +2207,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SYSTEM\\CurrentControlSet\\Services\\TCPIP6\\Parameters",
-  "value_name": "TcpMax",
+  "value_name": "TcpMaxDataRetransmissions",
   "value_type": "REG_DWORD",
   "expected_value": 3,
   "op": "=="
@@ -2238,8 +2257,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
   "value_name": "EnableNetbios",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   0,
+   2
+  ],
   "expected_value": 0,
-  "op": "=="
+  "op": "in"
  },
  {
   "id": "18.6.4.3",
@@ -2296,7 +2319,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LanmanWorkstation",
-  "value_name": "AllowInsecureGuest",
+  "value_name": "AllowInsecureGuestAuth",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2320,7 +2343,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD",
-  "value_name": "AllowLLTDIOOnDomain",
+  "value_name": "AllowLLTDIOOnPublicNetHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD:EnableLLTDIOHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD:ProhibitLLTDIOOnPrivateNet",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2332,7 +2355,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD",
-  "value_name": "AllowRspndrOnDomain",
+  "value_name": "AllowRspndrOnPublicNetHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD:EnableRspndrHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\LLTD:ProhibitRspndrOnPrivateNet",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2425,7 +2448,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WCN\\Registrars",
-  "value_name": "EnableRegistrars",
+  "value_name": "DisableFlashConfigRegistrarHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WCN\\Registrars:DisableWPDRegistrar",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -2523,8 +2546,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\\RPC",
   "value_name": "ForceKerberosForRpc",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   0,
+   1
+  ],
   "expected_value": 0,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "18.7.7",
@@ -2641,7 +2668,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CredentialsDelegation",
-  "value_name": "AllowProtected",
+  "value_name": "AllowProtectedCreds",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2667,8 +2694,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard",
   "value_name": "RequirePlatformSecurityFeatures",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   3
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "18.9.5.3",
@@ -2799,8 +2830,8 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
   "value_name": "DisableBkGndGroupPolicy",
   "value_type": "REG_DWORD",
-  "expected_value": "Disabled",
-  "op": "=="
+  "expected_value": null,
+  "op": "not_exists"
  },
  {
   "id": "18.9.20.1.1",
@@ -2917,7 +2948,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
-  "value_name": "NoPublishing",
+  "value_name": "NoPublishingWizard",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -2951,12 +2982,23 @@
   "title": "Ensure 'Turn off Windows Error Reporting' is set to 'Enabled' (Automated)",
   "profile": "L2-DC",
   "section": "18",
-  "type": "registry",
-  "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
-  "value_name": "Disabled",
-  "value_type": "REG_DWORD",
-  "expected_value": 0,
-  "op": "=="
+  "type": "registry_pair",
+  "checks": [
+   {
+    "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+    "value_name": "Disabled",
+    "value_type": "REG_DWORD",
+    "expected_value": 1,
+    "op": "=="
+   },
+   {
+    "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\PCHealth\\ErrorReporting",
+    "value_name": "DoReport",
+    "value_type": "REG_DWORD",
+    "expected_value": 0,
+    "op": "=="
+   }
+  ]
  },
  {
   "id": "18.9.23.1",
@@ -2965,7 +3007,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters",
-  "value_name": "DevicePKInitBehavior",
+  "value_name": "DevicePKInitBehaviorHKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters:DevicePKInitEnabled",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3181,7 +3223,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\SAM",
-  "value_name": "SamNGCKeyR",
+  "value_name": "SamNGCKeyROCAValidation",
   "value_type": "REG_DWORD",
   "expected_value": 2,
   "op": "=="
@@ -3351,8 +3393,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Connect",
   "value_name": "RequirePinForPairing",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": "=="
+  "op": "in"
  },
  {
   "id": "18.10.15.1",
@@ -3387,8 +3433,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
   "value_name": "AllowTelemetry",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   0,
+   1
+  ],
   "expected_value": 0,
-  "op": "=="
+  "op": "in"
  },
  {
   "id": "18.10.16.2",
@@ -3397,7 +3447,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
-  "value_name": "DisableEnterpriseAuth",
+  "value_name": "DisableEnterpriseAuthProxy",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -3517,7 +3567,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller",
-  "value_name": "EnableBypassCertificate",
+  "value_name": "EnableBypassCertificatePinningForMicrosoftStore",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -3769,7 +3819,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\ASR\\Rules",
-  "value_name": "26190899",
+  "value_name": "d4f940ab-401b-4efc-aadc-ad5f3c50688aHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsDefender\\WindowsDefenderExploitGuard\\ASR\\Rules:e6db77e5-3df2-4cf1-b95a-636979351e5b",
   "value_type": "REG_SZ",
   "expected_value": "1",
   "op": "=="
@@ -3879,8 +3929,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Remediation\\Behavioral Network Blocks\\Brute Force Protection",
   "value_name": "BruteForceProtectionAggressiveness",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "18.10.42.11.1.1.2",
@@ -3891,8 +3945,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Remediation\\Behavioral Network Blocks\\Brute Force Protection",
   "value_name": "BruteForceProtectionConfiguredState",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   2,
+   1
+  ],
   "expected_value": 2,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "18.10.42.11.1.2.1",
@@ -3903,8 +3961,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Remediation\\Behavioral Network Blocks\\Remote Encryption Protection",
   "value_name": "RemoteEncryptionProtectionAggressiveness",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   1,
+   2
+  ],
   "expected_value": 1,
-  "op": ">="
+  "op": "in"
  },
  {
   "id": "18.10.42.12.1",
@@ -4192,7 +4254,8 @@
   "value_name": "MaxIdleTime",
   "value_type": "REG_DWORD",
   "expected_value": 900000,
-  "op": "<="
+  "op": "<=",
+  "extra_ne": 0
  },
  {
   "id": "18.10.57.3.10.2",
@@ -4309,7 +4372,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
-  "value_name": "EnableSmartScreen",
+  "value_name": "EnableSmartScreenHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System:ShellSmartScreenLevel",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4335,8 +4398,12 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsInkWorkspace",
   "value_name": "AllowWindowsInkWorkspace",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   0,
+   1
+  ],
   "expected_value": 0,
-  "op": "=="
+  "op": "in"
  },
  {
   "id": "18.10.82.1",
@@ -4405,7 +4472,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging",
-  "value_name": "Enable",
+  "value_name": "EnableScriptBlockLogging",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4513,7 +4580,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WinRM\\Service\\WinRS",
-  "value_name": "AllowRemoteShell",
+  "value_name": "AllowRemoteShellAccess",
   "value_type": "REG_DWORD",
   "expected_value": 0,
   "op": "=="
@@ -4585,7 +4652,7 @@
   "section": "18",
   "type": "registry",
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
-  "value_name": "DeferQualityUpdates",
+  "value_name": "DeferQualityUpdatesHKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate:DeferQualityUpdatesPeriodInDays",
   "value_type": "REG_DWORD",
   "expected_value": 1,
   "op": "=="
@@ -4611,7 +4678,11 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
   "value_name": "DisableProxyAuthenticationSchemes",
   "value_type": "REG_DWORD",
+  "expected_values": [
+   256,
+   287
+  ],
   "expected_value": 256,
-  "op": ">="
+  "op": "in"
  }
 ]
