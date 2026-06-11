@@ -24,8 +24,34 @@ Breakdown by rule type:
 
 ## Files
 
+- `Invoke-CISAudit.ps1` — convenience wrapper. Runs the suite and exports a CSV report.
 - `CIS-WS2022-DC.Tests.ps1` — the Pester test runner (no per-rec code; it loops over the JSON).
 - `CIS-WS2022-DC-Rules.json` — the structured rule definitions auto-extracted from the CIS PDF.
+
+## Quick start — CSV report
+
+Run from an **elevated** PowerShell on the target DC:
+
+```powershell
+cd C:\path\to\cis-pester
+.\Invoke-CISAudit.ps1
+```
+
+This writes `cis-audit-<HOSTNAME>-<yyyyMMdd-HHmm>.csv` to the current directory with columns:
+
+| Column | Example |
+|---|---|
+| `date` | `2026-06-11 14:32:01` |
+| `hostname` | `DC01` |
+| `rule_id` | `2.3.4.1` |
+| `compliance` | `pass`, `fail`, or `skip` |
+
+Filter by tag:
+
+```powershell
+.\Invoke-CISAudit.ps1 -Tag L1-DC
+.\Invoke-CISAudit.ps1 -Tag Registry -OutputCsv .\reg-only.csv
+```
 
 ## Run
 
