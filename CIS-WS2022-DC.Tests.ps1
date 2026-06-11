@@ -135,6 +135,12 @@ BeforeAll {
         param($Actual, $Expected, $Op, $ValueType, $ExpectedValues, $ExtraNe)
         # 'not_exists': the test passes when the registry value is absent
         if ($Op -eq 'not_exists') { return ($null -eq $Actual) }
+        # 'blank': the test passes when the value is absent OR empty (no entries)
+        if ($Op -eq 'blank') {
+            if ($null -eq $Actual) { return $true }
+            $a = @($Actual) | ForEach-Object { "$_".Trim() } | Where-Object { $_ }
+            return ($a.Count -eq 0)
+        }
         if ($null -eq $Actual) { return $false }
         # 'in': actual must be one of ExpectedValues
         if ($Op -eq 'in' -and $ExpectedValues) {
