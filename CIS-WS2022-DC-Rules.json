@@ -858,8 +858,8 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
   "value_name": "LegalNoticeText",
   "value_type": "REG_SZ",
-  "expected_value": "text",
-  "op": "=="
+  "expected_value": null,
+  "op": "any_text"
  },
  {
   "id": "2.3.7.5",
@@ -870,8 +870,8 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
   "value_name": "LegalNoticeCaption",
   "value_type": "REG_SZ",
-  "expected_value": "text",
-  "op": "=="
+  "expected_value": null,
+  "op": "any_text"
  },
  {
   "id": "2.3.7.7",

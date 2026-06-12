@@ -141,6 +141,8 @@ BeforeAll {
             $a = @($Actual) | ForEach-Object { "$_".Trim() } | Where-Object { $_ }
             return ($a.Count -eq 0)
         }
+        # 'any_text': CIS 'Configure' rec - presence check, any string is acceptable
+        if ($Op -eq 'any_text') { return ($null -ne $Actual) }
         if ($null -eq $Actual) { return $false }
         # 'in': actual must be one of ExpectedValues
         if ($Op -eq 'in' -and $ExpectedValues) {
