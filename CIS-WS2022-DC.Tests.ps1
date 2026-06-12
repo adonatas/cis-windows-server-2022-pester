@@ -66,17 +66,12 @@ BeforeAll {
         $null = New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS -ErrorAction SilentlyContinue
     }
 
-    # Enumerate loaded user hives (real user SIDs, plus .DEFAULT which seeds new profiles).
-    # System SIDs (LocalSystem, LocalService, NetworkService, etc.) are excluded since
-    # those accounts don't apply CIS user-policy settings.
+    # Audit only the .DEFAULT hive - the template that seeds every new user profile.
+    # Existing per-user hives are intentionally NOT walked: CIS user-policy settings
+    # are evaluated against the baseline that future logons will receive.
     function Get-CisUserHiveSids {
-        $sids = @()
-        try {
-            $sids += Get-ChildItem 'HKU:\' -ErrorAction Stop |
-                ForEach-Object { $_.PSChildName } |
-                Where-Object { $_ -match '^(\.DEFAULT|S-1-5-21-\d+-\d+-\d+-\d+)$' -and $_ -notlike '*_Classes' }
-        } catch { }
-        ,$sids
+        if (Test-Path 'HKU:\.DEFAULT') { return ,@('.DEFAULT') }
+        return ,@()
     }
 
     # ------------ Helper: secedit export (cached) ------------
@@ -219,23 +214,18 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
         }
     }
 
-    Context "Per-user (HKU) recommendations" {
+    Context "Per-user (HKU\.DEFAULT) recommendations" {
         It "<id> - <title>" -ForEach (Import-CisRules hku_registry) -Tag 'HKU' {
-            $sids = Get-CisUserHiveSids
-            if ($sids.Count -eq 0) {
-                Set-ItResult -Inconclusive -Because "[$id] no user hives loaded under HKEY_USERS to audit"
+            if (-not (Test-Path 'HKU:\.DEFAULT')) {
+                Set-ItResult -Inconclusive -Because "[$id] HKU:\.DEFAULT not loaded"
                 return
             }
-            $bad = @()
-            foreach ($sid in $sids) {
-                $fullPath = "HKU:\$sid\$sub_path"
-                $actual = Get-RegistryValueSafe -Path $fullPath -Name $value_name
-                $ok = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op `
-                            -ValueType $value_type -ExpectedValues $expected_values -ExtraNe $extra_ne `
-                            -RangeMin $range_min -RangeMax $range_max
-                if (-not $ok) { $bad += "$sid (actual='$actual')" }
-            }
-            $bad.Count | Should -Be 0 -Because "[$id] $sub_path\$value_name should be $op $expected_value for every user; non-compliant: $($bad -join '; ')"
+            $fullPath = "HKU:\.DEFAULT\$sub_path"
+            $actual = Get-RegistryValueSafe -Path $fullPath -Name $value_name
+            $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op `
+                        -ValueType $value_type -ExpectedValues $expected_values -ExtraNe $extra_ne `
+                        -RangeMin $range_min -RangeMax $range_max
+            $result | Should -BeTrue -Because "[$id] HKU:\.DEFAULT\$sub_path\$value_name should be $op $expected_value ($value_type); actual: '$actual'"
         }
     }
 

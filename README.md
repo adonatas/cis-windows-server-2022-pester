@@ -19,7 +19,7 @@ Breakdown by rule type:
 | Registry | 288 | Direct `Get-ItemProperty` against `HKLM:\` |
 | Registry (paired/multi-location) | 8 | Many keys must all match |
 | Registry (multi-value) | 1 | Hardened UNC Paths |
-| Per-user (HKU) registry | 11 | Walks `HKEY_USERS\<SID>\…` for every loaded user hive |
+| Per-user (HKU) registry | 11 | Checks `HKEY_USERS\.DEFAULT\…` (template for new user profiles) |
 | User Rights Assignment | 39 | `secedit /export` → `[Privilege Rights]` |
 | Advanced Audit Policy | 34 | `auditpol /get /subcategory:{GUID}` |
 | Account/Lockout Policy | 13 | `secedit /export` → `[System Access]` |
