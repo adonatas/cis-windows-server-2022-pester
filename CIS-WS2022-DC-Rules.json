@@ -1427,8 +1427,8 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile\\Logging",
   "value_name": "LogFilePath",
   "value_type": "REG_SZ",
-  "expected_value": "<path>\\<filename>",
-  "op": "=="
+  "expected_value": null,
+  "op": "any_text"
  },
  {
   "id": "9.1.5",
@@ -1511,8 +1511,8 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging",
   "value_name": "LogFilePath",
   "value_type": "REG_SZ",
-  "expected_value": "<path>\\<filename>",
-  "op": "=="
+  "expected_value": null,
+  "op": "any_text"
  },
  {
   "id": "9.2.5",
@@ -1619,8 +1619,8 @@
   "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging",
   "value_name": "LogFilePath",
   "value_type": "REG_SZ",
-  "expected_value": "<path>\\<filename>",
-  "op": "=="
+  "expected_value": null,
+  "op": "any_text"
  },
  {
   "id": "9.3.7",
