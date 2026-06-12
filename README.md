@@ -8,16 +8,18 @@ Data-driven [Pester v5](https://pester.dev) suite that audits a Windows Server 2
 | | Included | Excluded |
 |---|---|---|
 | **Role** | Domain Controller (L1-DC, L2-DC, NG-DC) | Member Server |
-| **Policy area** | Computer Configuration | User Configuration (section 19) |
+| **Policy area** | Computer Configuration + Section 19 (per-user) | — |
 | **Profile** | Level 1, Level 2, Next-Generation | — |
-| **Coverage** | **387 / 433** recommendations | "MS only" recs and User Config |
+| **Coverage** | **394** recommendations | "MS only" recs and 4 user-excluded controls |
 
 Breakdown by rule type:
 
 | Type | Count | How it's tested |
 |---|---|---|
-| Registry | 300 | Direct `Get-ItemProperty` against `HKLM:\` |
+| Registry | 288 | Direct `Get-ItemProperty` against `HKLM:\` |
+| Registry (paired/multi-location) | 8 | Many keys must all match |
 | Registry (multi-value) | 1 | Hardened UNC Paths |
+| Per-user (HKU) registry | 11 | Walks `HKEY_USERS\<SID>\…` for every loaded user hive |
 | User Rights Assignment | 39 | `secedit /export` → `[Privilege Rights]` |
 | Advanced Audit Policy | 34 | `auditpol /get /subcategory:{GUID}` |
 | Account/Lockout Policy | 13 | `secedit /export` → `[System Access]` |
