@@ -132,7 +132,7 @@ BeforeAll {
     }
 
     function Compare-RegistryValue {
-        param($Actual, $Expected, $Op, $ValueType, $ExpectedValues, $ExtraNe)
+        param($Actual, $Expected, $Op, $ValueType, $ExpectedValues, $ExtraNe, $RangeMin, $RangeMax)
         # 'not_exists': the test passes when the registry value is absent
         if ($Op -eq 'not_exists') { return ($null -eq $Actual) }
         # 'blank': the test passes when the value is absent OR empty (no entries)
@@ -144,6 +144,12 @@ BeforeAll {
         # 'any_text': CIS 'Configure' rec - presence check, any string is acceptable
         if ($Op -eq 'any_text') { return ($null -ne $Actual) }
         if ($null -eq $Actual) { return $false }
+        # 'range': inclusive integer range (e.g. 'value between 5 and 14')
+        if ($Op -eq 'range') {
+            $a = 0
+            if (-not [int]::TryParse("$Actual", [ref]$a)) { return $false }
+            return ($a -ge [int]$RangeMin -and $a -le [int]$RangeMax)
+        }
         # 'in': actual must be one of ExpectedValues
         if ($Op -eq 'in' -and $ExpectedValues) {
             $a = 0
@@ -183,9 +189,13 @@ Describe "CIS Microsoft Windows Server 2022 Benchmark v5.0.0 (Domain Controller,
         It "<id> - <title>" -ForEach (Import-CisRules registry) -Tag 'Registry' {
             $actual = Get-RegistryValueSafe -Path $key -Name $value_name
             $result = Compare-RegistryValue -Actual $actual -Expected $expected_value -Op $op `
-                        -ValueType $value_type -ExpectedValues $expected_values -ExtraNe $extra_ne
+                        -ValueType $value_type -ExpectedValues $expected_values -ExtraNe $extra_ne `
+                        -RangeMin $range_min -RangeMax $range_max
             $expectedDisplay = if ($op -eq 'in')         { '[' + (@($expected_values) -join ',') + ']' }
                                elseif ($op -eq 'not_exists') { '<absent>' }
+                               elseif ($op -eq 'range')      { "$range_min..$range_max" }
+                               elseif ($op -eq 'any_text')   { '<any non-empty string>' }
+                               elseif ($op -eq 'blank')      { '<empty>' }
                                else                       { "$expected_value" }
             $result | Should -BeTrue -Because "[$id] $key\$value_name should be $op $expectedDisplay ($value_type); actual: '$actual'"
         }

@@ -882,8 +882,10 @@
   "key": "HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon",
   "value_name": "PasswordExpiryWarning",
   "value_type": "REG_DWORD",
-  "expected_value": "between 5 and 14 days",
-  "op": "=="
+  "range_min": 5,
+  "range_max": 14,
+  "expected_value": null,
+  "op": "range"
  },
  {
   "id": "2.3.7.9",
